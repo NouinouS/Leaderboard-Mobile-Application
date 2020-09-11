@@ -14,7 +14,9 @@
         <activity
             android:name=".ui.login.SubmitFormActivity"
             android:label="@string/title_activity_submit_form"></activity>
-        <activity android:name=".ui.main.MainActivity">
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

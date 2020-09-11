@@ -74,10 +74,6 @@ class SubmitFormActivity : AppCompatActivity() {
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
             }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
         })
 
         firstName.afterTextChanged {
@@ -134,12 +130,10 @@ class SubmitFormActivity : AppCompatActivity() {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
 
-        // Calls method to create and show success message dialog
         showFeedBackDialog(R.drawable.success_icon, R.string.submission_success)
         resetForm()
 
         val respMessage = model.response
-        // TODO : popup successful
         Toast.makeText(
             applicationContext,
             "submission successful : $respMessage",
@@ -148,7 +142,7 @@ class SubmitFormActivity : AppCompatActivity() {
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        // TODO : popup fail
+        showFeedBackDialog(R.drawable.warning_icon, R.string.submission_fail)
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
 

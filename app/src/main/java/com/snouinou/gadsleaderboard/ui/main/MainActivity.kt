@@ -3,9 +3,7 @@ package com.snouinou.gadsleaderboard.ui.main
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.AlarmClock
 import android.view.View
-import android.widget.EditText
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.snouinou.gadsleaderboard.R
@@ -14,6 +12,8 @@ import com.snouinou.gadsleaderboard.ui.login.SubmitFormActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread.sleep(1_000)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = findViewById(R.id.view_pager)

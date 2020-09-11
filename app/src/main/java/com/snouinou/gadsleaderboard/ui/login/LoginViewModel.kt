@@ -33,7 +33,6 @@ class LoginViewModel() : ViewModel() {
             githubUrl
         )
 
-        // TODO can be launched in a separate asynchronous job
         submitFormData!!.enqueue(object : Callback<Void?> {
             override fun onResponse(
                 call: Call<Void?>,
