@@ -12,7 +12,13 @@
     <string name="action_submit">Submit</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="invalid_first_name">Not a valid first name</string>
+    <string name="invalid_last_name">Not a valid last name</string>
+    <string name="invalid_email">Not a valid email</string>
+    <string name="invalid_github_url">Not a valid url</string>
+    <string name="submit_failed">Submit failed</string>
+    <string name="confirmation_btn">Yes</string>
+    <string name="confirmation_message">Are you sure ?</string>
+    <string name="submission_success">submission successful</string>
+    <string name="submission_fail">Submission not successful</string>
 </resources>

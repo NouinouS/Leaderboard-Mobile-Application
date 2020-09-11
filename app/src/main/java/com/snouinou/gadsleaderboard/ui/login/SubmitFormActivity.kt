@@ -1,35 +1,45 @@
 package com.snouinou.gadsleaderboard.ui.login
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import android.app.Dialog
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
-
+import android.widget.*
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.snouinou.gadsleaderboard.R
 
 class SubmitFormActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
 
+    private lateinit var submitDialog: Dialog
+    private lateinit var firstName: EditText
+    private lateinit var lastName: EditText
+    private lateinit var email: EditText
+    private lateinit var githubUrl: EditText
+    private lateinit var login: Button
+    private lateinit var loading: ProgressBar
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_submit_form)
 
-        val username = findViewById<EditText>(R.id.username)
-        val password = findViewById<EditText>(R.id.password)
-        val login = findViewById<Button>(R.id.login)
-        val loading = findViewById<ProgressBar>(R.id.loading)
+        firstName = findViewById<EditText>(R.id.first_name)
+        lastName = findViewById<EditText>(R.id.last_name)
+        email = findViewById<EditText>(R.id.email)
+        githubUrl = findViewById<EditText>(R.id.github_url)
+
+        login = findViewById<Button>(R.id.submit_form)
+        loading = findViewById<ProgressBar>(R.id.loading)
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -40,11 +50,17 @@ class SubmitFormActivity : AppCompatActivity() {
             // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
 
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
+            if (loginState.firstNameError != null) {
+                firstName.error = getString(loginState.firstNameError)
             }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
+            if (loginState.lastNameError != null) {
+                lastName.error = getString(loginState.lastNameError)
+            }
+            if (loginState.emailError != null) {
+                email.error = getString(loginState.emailError)
+            }
+            if (loginState.githubUrlError != null) {
+                lastName.error = getString(loginState.githubUrlError)
             }
         })
 
@@ -64,18 +80,40 @@ class SubmitFormActivity : AppCompatActivity() {
             finish()
         })
 
-        username.afterTextChanged {
+        firstName.afterTextChanged {
             loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
+                firstName.text.toString(),
+                lastName.text.toString(),
+                lastName.text.toString(),
+                githubUrl.text.toString()
             )
         }
 
-        password.apply {
+        lastName.afterTextChanged {
+            loginViewModel.loginDataChanged(
+                firstName.text.toString(),
+                lastName.text.toString(),
+                lastName.text.toString(),
+                githubUrl.text.toString()
+            )
+        }
+
+        email.afterTextChanged {
+            loginViewModel.loginDataChanged(
+                firstName.text.toString(),
+                lastName.text.toString(),
+                lastName.text.toString(),
+                githubUrl.text.toString()
+            )
+        }
+
+        githubUrl.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                    firstName.text.toString(),
+                    lastName.text.toString(),
+                    lastName.text.toString(),
+                    githubUrl.text.toString()
                 )
             }
 
@@ -83,34 +121,78 @@ class SubmitFormActivity : AppCompatActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
+                            firstName.text.toString(),
+                            lastName.text.toString(),
+                            lastName.text.toString(),
+                            githubUrl.text.toString()
                         )
                 }
                 false
-            }
-
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        // TODO : initiate successful logged in experience
+
+        // Calls method to create and show success message dialog
+        showFeedBackDialog(R.drawable.success_icon, R.string.submission_success)
+        resetForm()
+
+        val respMessage = model.response
+        // TODO : popup successful
         Toast.makeText(
             applicationContext,
-            "$welcome $displayName",
+            "submission successful : $respMessage",
             Toast.LENGTH_LONG
         ).show()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
+        // TODO : popup fail
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
+    fun showConfirmationDialog(view: View?) {
+        submitDialog = Dialog(this)
+        submitDialog.setContentView(R.layout.dialog_confirmation)
+
+        val closeIBtn: ImageButton =
+            submitDialog.findViewById(R.id.cancel_imageButton)
+
+        closeIBtn.setOnClickListener { submitDialog.cancel() }
+
+        val continueBtn: Button =
+            submitDialog.findViewById(R.id.confirm_submit_button)
+        continueBtn.setOnClickListener {
+            loading.visibility = View.VISIBLE
+            loginViewModel.login(firstName.text.toString(), lastName.text.toString(), email.text.toString(), githubUrl.text.toString())
+         }
+
+        submitDialog.setCanceledOnTouchOutside(false)
+        submitDialog.show()
+    }
+
+    fun showFeedBackDialog(responseImage: Int, responseText: Int) {
+
+        submitDialog.dismiss()
+        submitDialog = Dialog(this@SubmitFormActivity)
+        submitDialog.setContentView(R.layout.dialog_feedback)
+        val feedBackIcon: ImageView =
+            submitDialog.findViewById(R.id.response_imageView)
+        val feedBackText: TextView = submitDialog.findViewById(R.id.feedback_desc)
+
+        feedBackIcon.setImageResource(responseImage)
+        feedBackText.text = getString(responseText)
+        submitDialog.show()
+    }
+
+    fun resetForm() {
+            firstName.text.clear()
+            lastName.text.clear()
+            email.text.clear()
+            githubUrl.text.clear()
+    }
+
 }
 
 /**
@@ -127,3 +209,4 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
 }
+
