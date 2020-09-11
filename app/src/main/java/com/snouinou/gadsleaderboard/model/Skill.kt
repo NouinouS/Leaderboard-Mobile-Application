@@ -3,7 +3,7 @@ package com.snouinou.gadsleaderboard.model
 data class Skill(
                  var name: String = "",
                  var score: Int = 0,
-                 var badge: String = "",
+                 var badgeUrl: String = "",
                  var country: String = ""
 ) : Score {
     override fun getTitle(): String {
@@ -15,6 +15,6 @@ data class Skill(
     }
 
     override fun getImage(): String {
-        return badge
+        return badgeUrl
     }
 }
